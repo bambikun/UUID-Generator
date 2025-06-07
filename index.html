@@ -6,60 +6,100 @@
   <title>UUIDジェネレーター</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* ページ全体のフォントと余白 */
     body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
-    /* 数値入力欄の幅とサイズ */
-    input[type=number] { width: 60px; font-size: 1em; }
-    /* ボタンのスタイル */
+    input[type=number], select { font-size: 1em; padding: 0.3em; }
+    input[type=number] { width: 60px; }
     button { font-size: 1em; padding: 0.5em 1em; margin-left: 10px; }
-    /* 結果表示エリアのスタイル */
-    #result { margin-top: 20px; white-space: pre-wrap; word-break: break-all; background: #f0f0f0; padding: 10px; border-radius: 6px; }
+    #result { margin-top: 20px; white-space: pre-wrap; word-break: break-all; background: #f0f0f0; padding: 10px; border-radius: 6px; border: 1px solid #ccc; font-family: 'Courier New', Courier, monospace; font-size: 1.2em; color: #000; }
+    label { margin-right: 6px; }
   </style>
 </head>
 <body>
   <h1>UUIDジェネレーター</h1>
 
-  <div style="display: flex; align-items: center; gap: 12px; max-width: 400px;">
-    <!-- 新しく追加したUUID数入力欄 -->
-    <label for="uuidCount">UUID数入力:</label>
-    <input type="number" id="uuidCount" min="1" max="100" value="1" style="width: 60px;" />
+  <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; max-width: 600px;">
+    <label for="uuidVersion">UUIDバージョン:</label>
+    <select id="uuidVersion">
+      <option value="v1">UUIDv1</option>
+      <option value="v2">UUIDv2</option>
+      <option value="v3">UUIDv3</option>
+      <option value="v4" selected>UUIDv4</option>
+      <option value="v5">UUIDv5</option>
+    </select>
 
-    <!-- 既存の生成数入力欄 -->
-    <label for="count">生成数:</label>
-    <input type="number" id="count" min="1" max="100" value="1" style="width: 60px;" />
+    <label for="namespace">名前空間（v3,v5用）:</label>
+    <select id="namespace">
+      <option value="6ba7b810-9dad-11d1-80b4-00c04fd430c8">DNS</option>
+      <option value="6ba7b811-9dad-11d1-80b4-00c04fd430c8">URL</option>
+      <option value="6ba7b812-9dad-11d1-80b4-00c04fd430c8">OID</option>
+      <option value="6ba7b814-9dad-11d1-80b4-00c04fd430c8">X500</option>
+    </select>
 
-    <!-- 生成ボタン -->
+    <label for="name">名前（v3,v5用）:</label>
+    <input type="text" id="name" placeholder="例: example.com" style="width:150px" />
+
+    <label for="uuidCount">生成数:</label>
+    <input type="number" id="uuidCount" min="1" max="100" value="1" />
+
     <button id="generate">生成</button>
   </div>
 
-  <div id="result" style="margin-top: 20px; white-space: pre-wrap; word-break: break-all; background: #f0f0f0; padding: 10px; border-radius: 6px; border: 1px solid #ccc; font-family: 'Courier New', Courier, monospace; font-size: 1.2em; color: #000;"></div>
+  <div id="result"></div>
 
   <script src="uuid-generator.js"></script>
   <script>
     const btn = document.getElementById('generate');
-    const inputUUIDCount = document.getElementById('uuidCount');
-    const inputCount = document.getElementById('count');
+    const versionSelect = document.getElementById('uuidVersion');
+    const namespaceSelect = document.getElementById('namespace');
+    const nameInput = document.getElementById('name');
+    const countInput = document.getElementById('uuidCount');
     const result = document.getElementById('result');
 
     const MAX_UUID_COUNT = 100;
 
-    btn.addEventListener('click', () => {
-      // ここは用途に応じて使い分ける例（両方ともチェック）
-      let uuidCount = parseInt(inputUUIDCount.value);
-      if (isNaN(uuidCount) || uuidCount < 1) uuidCount = 1;
-      if (uuidCount > MAX_UUID_COUNT) uuidCount = MAX_UUID_COUNT;
+    btn.addEventListener('click', async () => {
+      let version = versionSelect.value;
+      let count = parseInt(countInput.value);
+      if (isNaN(count) || count < 1) count = 1;
+      if (count > MAX_UUID_COUNT) count = MAX_UUID_COUNT;
 
-      let n = parseInt(inputCount.value);
-      if (isNaN(n) || n < 1) n = 1;
-      if (n > MAX_UUID_COUNT) n = MAX_UUID_COUNT;
+      result.textContent = '生成中...';
 
-      // ここでは単純にinputUUIDCountを使って生成数決定にしています
-      const uuids = [];
-      for (let i = 0; i < uuidCount; i++) {
-        uuids.push(UUIDv4());
+      try {
+        let uuids = [];
+        if (version === 'v1') {
+          for (let i = 0; i < count; i++) {
+            uuids.push(UUID.v1());
+          }
+        } else if (version === 'v2') {
+          for (let i = 0; i < count; i++) {
+            uuids.push(UUID.v2());
+          }
+        } else if (version === 'v3' || version === 'v5') {
+          const namespace = namespaceSelect.value;
+          const name = nameInput.value.trim();
+          if (!name) {
+            alert('v3/v5を使う場合は名前を入力してください');
+            result.textContent = '';
+            return;
+          }
+          for (let i = 0; i < count; i++) {
+            if (version === 'v3') {
+              uuids.push(await UUID.v3(namespace, name));
+            } else {
+              uuids.push(await UUID.v5(namespace, name));
+            }
+          }
+        } else if (version === 'v4') {
+          for (let i = 0; i < count; i++) {
+            uuids.push(UUID.v4());
+          }
+        }
+        result.textContent = uuids.join('\n');
+      } catch (e) {
+        result.textContent = 'エラーが発生しました: ' + e.message;
       }
-
-      result.textContent = uuids.join('\n');
     });
   </script>
 </body>
+</html>
