@@ -11,11 +11,9 @@
 
 ## 使い方
 
-1. ブラウザで `index.html` を開く  
-2. 「生成数」に生成したいUUIDの数を入力し、「生成」ボタンを押す  
-3. 画面下に生成されたUUID一覧が表示される
+[GitHub Pages](https://bambikun.github.io/UUID-Generator/)で公開中のURLにアクセスして使えます。
 
-または、[GitHub Pages](https://yourusername.github.io/uuid-generator/)で公開中のURLにアクセスして使えます。
+メインではUUID v4を使用しています。
 
 ## ライセンス
 
@@ -23,8 +21,15 @@ MIT License
 
 ---
 
-UUIDv4はランダム生成のUUIDで、ほとんどの用途でユニーク性が十分確保されています。  
-UUIDv1など他のバージョンの生成はブラウザ環境では難しいため、本ツールではUUIDv4を採用しています。
+UUIDv1: 時間＋MACアドレスベースで生成、生成時刻や機器情報が含まれる。
+
+UUIDv2: DCEセキュリティ版でPOSIX UID/GID情報を埋め込む、ほとんど使われない。
+
+UUIDv3: 名前空間＋名前文字列をMD5でハッシュして決定論的に生成。
+
+UUIDv4: 完全ランダム（乱数）生成で最も広く利用される。
+
+UUIDv5: 名前空間＋名前文字列をSHA-1でハッシュして決定論的に生成。
 
 ---
 
