@@ -19,30 +19,43 @@
 <body>
   <h1>UUIDジェネレーター</h1>
 
-  <label for="count">生成数:</label>
-  <input type="number" id="count" min="1" max="100" value="1" />
-  <button id="generate">生成</button>
+  <div style="display: flex; align-items: center; gap: 12px; max-width: 400px;">
+    <!-- 新しく追加したUUID数入力欄 -->
+    <label for="uuidCount">UUID数入力:</label>
+    <input type="number" id="uuidCount" min="1" max="100" value="1" style="width: 60px;" />
 
-  <div id="result"></div>
+    <!-- 既存の生成数入力欄 -->
+    <label for="count">生成数:</label>
+    <input type="number" id="count" min="1" max="100" value="1" style="width: 60px;" />
 
-  <!-- uuid-generator.js を先に読み込む -->
+    <!-- 生成ボタン -->
+    <button id="generate">生成</button>
+  </div>
+
+  <div id="result" style="margin-top: 20px; white-space: pre-wrap; word-break: break-all; background: #f0f0f0; padding: 10px; border-radius: 6px; border: 1px solid #ccc; font-family: 'Courier New', Courier, monospace; font-size: 1.2em; color: #000;"></div>
+
   <script src="uuid-generator.js"></script>
   <script>
     const btn = document.getElementById('generate');
+    const inputUUIDCount = document.getElementById('uuidCount');
     const inputCount = document.getElementById('count');
     const result = document.getElementById('result');
 
-    // 最大生成数（例）
     const MAX_UUID_COUNT = 100;
 
     btn.addEventListener('click', () => {
+      // ここは用途に応じて使い分ける例（両方ともチェック）
+      let uuidCount = parseInt(inputUUIDCount.value);
+      if (isNaN(uuidCount) || uuidCount < 1) uuidCount = 1;
+      if (uuidCount > MAX_UUID_COUNT) uuidCount = MAX_UUID_COUNT;
+
       let n = parseInt(inputCount.value);
       if (isNaN(n) || n < 1) n = 1;
       if (n > MAX_UUID_COUNT) n = MAX_UUID_COUNT;
 
+      // ここでは単純にinputUUIDCountを使って生成数決定にしています
       const uuids = [];
-      for (let i = 0; i < n; i++) {
-        // ここでUUIDv4()を呼び出す
+      for (let i = 0; i < uuidCount; i++) {
         uuids.push(UUIDv4());
       }
 
