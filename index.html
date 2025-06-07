@@ -77,7 +77,7 @@
     </div>
 
     <label for="uuidCount">生成数:</label> 
-    <input type="number" id="uuidCount" min="1" max="100" value="1" /> 
+    <input type="number" id="uuidCount" min="1" value="1" /> 
  
     <button id="generate">生成</button> 
   </div> 
@@ -93,8 +93,6 @@
     const countInput = document.getElementById('uuidCount'); 
     const result = document.getElementById('result'); 
     const v3v5Options = document.getElementById('v3v5Options');
-
-    const MAX_UUID_COUNT = 100; 
 
     // バージョン選択でv3,v5の場合のみ名前空間・名前を表示、それ以外は非表示
     function updateV3v5OptionsVisibility() {
@@ -118,7 +116,7 @@
       let version = versionSelect.value; 
       let count = parseInt(countInput.value); 
       if (isNaN(count) || count < 1) count = 1; 
-      if (count > MAX_UUID_COUNT) count = MAX_UUID_COUNT; 
+      // 個数制限はなし 
 
       result.textContent = '生成中...'; 
 
