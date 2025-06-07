@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UUIDジェネレーター</title>
+  <style>
+    /* ページ全体のフォントと余白 */
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    /* 数値入力欄の幅とサイズ */
+    input[type=number] { width: 60px; font-size: 1em; }
+    /* ボタンのスタイル */
+    button { font-size: 1em; padding: 0.5em 1em; margin-left: 10px; }
+    /* 結果表示エリアのスタイル */
+    #result { margin-top: 20px; white-space: pre-wrap; word-break: break-all; background: #f0f0f0; padding: 10px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <h1>UUIDジェネレーター</h1>
+
+  <!-- 生成するUUIDの数を指定する入力欄 -->
+  <label for="count">生成数:</label>
+  <input type="number" id="count" min="1" max="100" value="1" />
+  <!-- UUIDを生成するボタン -->
+  <button id="generate">生成</button>
+
+  <!-- 生成されたUUIDを表示する領域 -->
+  <div id="result"></div>
+
+  <script>
+    /**
+     * UUIDv4を生成する関数
+     * RFC4122に準拠したバージョン4UUID（ランダム生成）を作成
+     * 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx' の形式で返す
+     */
+    function generateUUIDv4() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        // crypto.getRandomValuesで安全な乱数を取得
+        const r = crypto.getRandomValues(new Uint8Array(1))[0] % 16;
+        // 'x'の場合はr、'y'の場合は(r & 0x3 | 0x8)でバージョン4仕様に合わせる
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+
+    // ボタン、入力欄、結果表示領域の要素を取得
+    const btn = document.getElementById('generate');
+    const inputCount = document.getElementById('count');
+    const result = document.getElementById('result');
+
+    // 生成ボタンが押された時の処理
+    btn.addEventListener('click', () => {
+      // 入力された生成数を整数として取得。1未満なら1に補正。
+      let n = parseInt(inputCount.value);
+      if (isNaN(n) || n < 1) n = 1;
+      if (n > 100) n = 100; // 上限は100個までに制限
+
+      const uuids = [];
+      // n個のUUIDを生成し配列に追加
+      for (let i = 0; i < n; i++) {
+        uuids.push(generateUUIDv4());
+      }
+
+      // 改行区切りで結果表示領域にセット
+      result.textContent = uuids.join('\n');
+    });
+  </script>
+</body>
+</html>
