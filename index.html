@@ -4,35 +4,50 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>UUIDジェネレーター</title>
-  <link rel="stylesheet" href="style.css" />
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
-    input[type=number], select, input[type=text], button { font-size: 1em; padding: 0.3em; }
+    input[type=number], select, input[type=text], button {
+      font-size: 1em;
+      padding: 0.3em;
+    }
     input[type=number] { width: 60px; }
     input[type=text] { width: 150px; }
-    button { margin-left: 6px; }
-    #result { margin-top: 20px; white-space: pre-wrap; word-break: break-all; background: #f0f0f0; padding: 10px; border-radius: 6px; border: 1px solid #ccc; font-family: 'Courier New', Courier, monospace; font-size: 1.2em; color: #000; }
-    label { margin-right: 6px; }
-    .flex-container {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      max-width: 600px;
+    button { font-size: 1em; padding: 0.5em 1em; margin-left: 10px; }
+
+    /* 結果表示を2列のグリッドに */
+    #result {
+      margin-top: 20px;
+      background: #f0f0f0;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 1.2em;
+      color: #000;
+
+      display: grid;
+      grid-template-columns: 30px 1fr; /* 左列30px幅、右列は残り */
+      column-gap: 10px;
+      /* 行の高さは自動 */
     }
-    /* 名前空間・名前入力用ラッパー */
-    #v3v5Options {
-      display: none;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
+
+    /* 番号の右寄せ */
+    .num {
+      text-align: right;
+      user-select: none;
+      color: #555;
+      padding-right: 5px;
+    }
+    /* UUIDのスタイル */
+    .uuid {
+      word-break: break-all;
     }
   </style>
 </head>
 <body>
   <h1>UUIDジェネレーター</h1>
 
-  <div class="flex-container">
+  <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; max-width: 600px;">
     <label for="uuidVersion">UUIDバージョン:</label>
     <select id="uuidVersion">
       <option value="v1">UUIDv1</option>
@@ -42,19 +57,16 @@
       <option value="v5">UUIDv5</option>
     </select>
 
-    <div id="v3v5Options" class="flex-container">
-      <label for="namespace">名前空間（v3,v5用）:</label>
-      <select id="namespace">
-        <option value="6ba7b810-9dad-11d1-80b4-00c04fd430c8">DNS</option>
-        <option value="6ba7b811-9dad-11d1-80b4-00c04fd430c8">URL</option>
-        <option value="6ba7b812-9dad-11d1-80b4-00c04fd430c8">OID</option>
-        <option value="6ba7b814-9dad-11d1-80b4-00c04fd430c8">X500</option>
-      </select>
+    <label for="namespace">名前空間（v3,v5用）:</label>
+    <select id="namespace">
+      <option value="6ba7b810-9dad-11d1-80b4-00c04fd430c8">DNS</option>
+      <option value="6ba7b811-9dad-11d1-80b4-00c04fd430c8">URL</option>
+      <option value="6ba7b812-9dad-11d1-80b4-00c04fd430c8">OID</option>
+      <option value="6ba7b814-9dad-11d1-80b4-00c04fd430c8">X500</option>
+    </select>
 
-      <label for="name">名前（v3,v5用）:</label>
-      <input type="text" id="name" placeholder="例: example.com" />
-      <button type="button" id="randNameBtn" title="5文字の乱数を生成">乱数生成</button>
-    </div>
+    <label for="name">名前（v3,v5用）:</label>
+    <input type="text" id="name" placeholder="例: example.com" />
 
     <label for="uuidCount">生成数:</label>
     <input type="number" id="uuidCount" min="1" max="100" value="1" />
@@ -66,40 +78,10 @@
 
   <script src="uuid-generator.js"></script>
   <script>
-    // 5文字の乱数生成
-    function generateRandomString(length) {
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      let result = '';
-      for (let i = 0; i < length; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-      }
-      return result;
-    }
-
-    // v3,v5用オプションの表示切替
-    const versionSelect = document.getElementById('uuidVersion');
-    const v3v5Options = document.getElementById('v3v5Options');
-    const nameInput = document.getElementById('name');
-    const randNameBtn = document.getElementById('randNameBtn');
-
-    function toggleV3V5Options() {
-      if (versionSelect.value === 'v3' || versionSelect.value === 'v5') {
-        v3v5Options.style.display = 'flex';
-      } else {
-        v3v5Options.style.display = 'none';
-        nameInput.value = '';
-      }
-    }
-
-    versionSelect.addEventListener('change', toggleV3V5Options);
-    toggleV3V5Options(); // 初期表示制御
-
-    randNameBtn.addEventListener('click', () => {
-      nameInput.value = generateRandomString(5);
-    });
-
     const btn = document.getElementById('generate');
+    const versionSelect = document.getElementById('uuidVersion');
     const namespaceSelect = document.getElementById('namespace');
+    const nameInput = document.getElementById('name');
     const countInput = document.getElementById('uuidCount');
     const result = document.getElementById('result');
 
@@ -143,7 +125,26 @@
             uuids.push(UUID.v4());
           }
         }
-        result.textContent = uuids.join('\n');
+
+        // ここでresultに番号＋UUIDの2列を作る
+        // resultを空にしてからappendChildで要素を追加
+        result.textContent = ''; // 空にする
+
+        uuids.forEach((uuid, idx) => {
+          // 番号部分
+          const numDiv = document.createElement('div');
+          numDiv.className = 'num';
+          numDiv.textContent = idx + 1;
+
+          // UUID部分
+          const uuidDiv = document.createElement('div');
+          uuidDiv.className = 'uuid';
+          uuidDiv.textContent = uuid;
+
+          result.appendChild(numDiv);
+          result.appendChild(uuidDiv);
+        });
+
       } catch (e) {
         result.textContent = 'エラーが発生しました: ' + e.message;
       }
