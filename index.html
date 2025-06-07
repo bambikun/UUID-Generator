@@ -40,7 +40,14 @@
     .uuid { 
       word-break: break-word; 
     } 
- 
+
+    /* v3,v5用の入力欄のラップ */ 
+    #v3v5Options { 
+      display: none; 
+      align-items: center; 
+      gap: 12px; 
+      flex-wrap: wrap; 
+    }
   </style> 
 </head> 
 <body> 
@@ -55,18 +62,20 @@
       <option value="v4" selected>UUIDv4</option> 
       <option value="v5">UUIDv5</option> 
     </select> 
+
+    <div id="v3v5Options">
+      <label for="namespace">名前空間（v3,v5用）:</label> 
+      <select id="namespace"> 
+        <option value="6ba7b810-9dad-11d1-80b4-00c04fd430c8">DNS</option> 
+        <option value="6ba7b811-9dad-11d1-80b4-00c04fd430c8">URL</option> 
+        <option value="6ba7b812-9dad-11d1-80b4-00c04fd430c8">OID</option> 
+        <option value="6ba7b814-9dad-11d1-80b4-00c04fd430c8">X500</option> 
+      </select> 
  
-    <label for="namespace">名前空間（v3,v5用）:</label> 
-    <select id="namespace"> 
-      <option value="6ba7b810-9dad-11d1-80b4-00c04fd430c8">DNS</option> 
-      <option value="6ba7b811-9dad-11d1-80b4-00c04fd430c8">URL</option> 
-      <option value="6ba7b812-9dad-11d1-80b4-00c04fd430c8">OID</option> 
-      <option value="6ba7b814-9dad-11d1-80b4-00c04fd430c8">X500</option> 
-    </select> 
- 
-    <label for="name">名前（v3,v5用）:</label> 
-    <input type="text" id="name" placeholder="例: example.com" /> 
- 
+      <label for="name">名前（v3,v5用）:</label> 
+      <input type="text" id="name" placeholder="例: example.com" />
+    </div>
+
     <label for="uuidCount">生成数:</label> 
     <input type="number" id="uuidCount" min="1" max="100" value="1" /> 
  
@@ -83,17 +92,36 @@
     const nameInput = document.getElementById('name'); 
     const countInput = document.getElementById('uuidCount'); 
     const result = document.getElementById('result'); 
- 
+    const v3v5Options = document.getElementById('v3v5Options');
+
     const MAX_UUID_COUNT = 100; 
- 
+
+    // バージョン選択でv3,v5の場合のみ名前空間・名前を表示、それ以外は非表示
+    function updateV3v5OptionsVisibility() {
+      const version = versionSelect.value;
+      if (version === 'v3' || version === 'v5') {
+        v3v5Options.style.display = 'flex';
+      } else {
+        v3v5Options.style.display = 'none';
+      }
+    }
+
+    // 初期表示用
+    updateV3v5OptionsVisibility();
+
+    // バージョンが変わったら表示切り替え
+    versionSelect.addEventListener('change', () => {
+      updateV3v5OptionsVisibility();
+    });
+
     btn.addEventListener('click', async () => { 
       let version = versionSelect.value; 
       let count = parseInt(countInput.value); 
       if (isNaN(count) || count < 1) count = 1; 
       if (count > MAX_UUID_COUNT) count = MAX_UUID_COUNT; 
- 
+
       result.textContent = '生成中...'; 
- 
+
       try { 
         let uuids = []; 
         if (version === 'v1') { 
@@ -124,25 +152,23 @@
             uuids.push(UUID.v4()); 
           } 
         } 
- 
-        // ここでresultに番号＋UUIDの2列を作る 
-        result.textContent = ''; // 空にする 
- 
+
+        // 結果表示をクリアして番号＋UUIDを2列表示
+        result.textContent = ''; 
+
         uuids.forEach((uuid, idx) => { 
-          // 番号部分 
           const numDiv = document.createElement('div'); 
           numDiv.className = 'num'; 
           numDiv.textContent = (idx + 1) + '.'; 
- 
-          // UUID部分 
+
           const uuidDiv = document.createElement('div'); 
           uuidDiv.className = 'uuid'; 
           uuidDiv.textContent = uuid; 
- 
+
           result.appendChild(numDiv); 
           result.appendChild(uuidDiv); 
         }); 
- 
+
       } catch (e) { 
         result.textContent = 'エラーが発生しました: ' + e.message; 
       } 
