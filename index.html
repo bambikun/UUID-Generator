@@ -26,7 +26,24 @@
       <option value="v4" selected>UUIDv4</option>
       <option value="v5">UUIDv5</option>
     </select>
+  <script>
+    const versionSelect = document.getElementById('uuidVersion');
+    const namespaceSelect = document.getElementById('namespace');
+    const nameInput = document.getElementById('name');
 
+    function updateNamespaceNameVisibility() {
+      if (versionSelect.value === 'v3' || versionSelect.value === 'v5') {
+        namespaceSelect.style.display = 'inline-block';
+        nameInput.style.display = 'inline-block';
+      } else {
+        namespaceSelect.style.display = 'none';
+        nameInput.style.display = 'none';
+      }
+    }
+
+versionSelect.addEventListener('change', updateNamespaceNameVisibility);
+updateNamespaceNameVisibility();
+  </script>
     <label for="namespace">名前空間（v3,v5用）:</label>
     <select id="namespace">
       <option value="6ba7b810-9dad-11d1-80b4-00c04fd430c8">DNS</option>
