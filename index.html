@@ -16,32 +16,31 @@
 
     /* 結果表示を2列のグリッドに */
     #result {
-      margin-top: 20px;
-      background: #f0f0f0;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-family: 'Courier New', Courier, monospace;
-      font-size: 1.2em;
-      color: #000;
+    display: grid;
+    grid-template-columns: 30px 1fr;
+    column-gap: 10px;
+    margin-top: 20px;
+    white-space: normal; /* 折り返しを自然に */
+    background: #f0f0f0;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 1.2em;
+    color: #000000;
+  }
 
-      display: grid;
-      grid-template-columns: 30px 1fr; /* 左列30px幅、右列は残り */
-      column-gap: 10px;
-      /* 行の高さは自動 */
-    }
+  .num {
+    text-align: right;
+    user-select: none;
+    color: #666666;
+    padding-right: 5px;
+  }
 
-    /* 番号の右寄せ */
-    .num {
-      text-align: right;
-      user-select: none;
-      color: #555;
-      padding-right: 5px;
-    }
-    /* UUIDのスタイル */
-    .uuid {
-      word-break: break-all;
-    }
+  .uuid {
+    word-break: break-word;
+  }
+
   </style>
 </head>
 <body>
