@@ -19,51 +19,34 @@
 <body>
   <h1>UUIDジェネレーター</h1>
 
-  <!-- 生成するUUIDの数を指定する入力欄 -->
   <label for="count">生成数:</label>
   <input type="number" id="count" min="1" max="100" value="1" />
-  <!-- UUIDを生成するボタン -->
   <button id="generate">生成</button>
 
-  <!-- 生成されたUUIDを表示する領域 -->
   <div id="result"></div>
 
+  <!-- uuid-generator.js を先に読み込む -->
+  <script src="uuid-generator.js"></script>
   <script>
-    /**
-     * UUIDv4を生成する関数
-     * RFC4122に準拠したバージョン4UUID（ランダム生成）を作成
-     * 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx' の形式で返す
-     */
-    function generateUUIDv4() {
-      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        // crypto.getRandomValuesで安全な乱数を取得
-        const r = crypto.getRandomValues(new Uint8Array(1))[0] % 16;
-        // 'x'の場合はr、'y'の場合は(r & 0x3 | 0x8)でバージョン4仕様に合わせる
-        const v = c === 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-      });
-    }
-
-    // ボタン、入力欄、結果表示領域の要素を取得
     const btn = document.getElementById('generate');
     const inputCount = document.getElementById('count');
     const result = document.getElementById('result');
 
-    // 最大生成数を定義（ここを書き換えれば変更可能）
+    // 最大生成数（例）
     const MAX_UUID_COUNT = 100;
-    
+
     btn.addEventListener('click', () => {
       let n = parseInt(inputCount.value);
       if (isNaN(n) || n < 1) n = 1;
-      if (n > MAX_UUID_COUNT) n = MAX_UUID_COUNT; // 最大数で制限
+      if (n > MAX_UUID_COUNT) n = MAX_UUID_COUNT;
 
       const uuids = [];
       for (let i = 0; i < n; i++) {
-        uuids.push(generateUUIDv4());
+        // ここでUUIDv4()を呼び出す
+        uuids.push(UUIDv4());
       }
 
       result.textContent = uuids.join('\n');
     });
   </script>
 </body>
-</html>
