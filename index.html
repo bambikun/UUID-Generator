@@ -20,6 +20,13 @@
       flex-wrap: wrap;
       max-width: 600px;
     }
+    /* 名前空間・名前入力用ラッパー */
+    #v3v5Options {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
   </style>
 </head>
 <body>
@@ -35,17 +42,19 @@
       <option value="v5">UUIDv5</option>
     </select>
 
-    <label for="namespace">名前空間（v3,v5用）:</label>
-    <select id="namespace">
-      <option value="6ba7b810-9dad-11d1-80b4-00c04fd430c8">DNS</option>
-      <option value="6ba7b811-9dad-11d1-80b4-00c04fd430c8">URL</option>
-      <option value="6ba7b812-9dad-11d1-80b4-00c04fd430c8">OID</option>
-      <option value="6ba7b814-9dad-11d1-80b4-00c04fd430c8">X500</option>
-    </select>
+    <div id="v3v5Options" class="flex-container">
+      <label for="namespace">名前空間（v3,v5用）:</label>
+      <select id="namespace">
+        <option value="6ba7b810-9dad-11d1-80b4-00c04fd430c8">DNS</option>
+        <option value="6ba7b811-9dad-11d1-80b4-00c04fd430c8">URL</option>
+        <option value="6ba7b812-9dad-11d1-80b4-00c04fd430c8">OID</option>
+        <option value="6ba7b814-9dad-11d1-80b4-00c04fd430c8">X500</option>
+      </select>
 
-    <label for="name">名前（v3,v5用）:</label>
-    <input type="text" id="name" placeholder="例: example.com" />
-    <button type="button" id="randNameBtn" title="5文字の乱数を生成">乱数生成</button>
+      <label for="name">名前（v3,v5用）:</label>
+      <input type="text" id="name" placeholder="例: example.com" />
+      <button type="button" id="randNameBtn" title="5文字の乱数を生成">乱数生成</button>
+    </div>
 
     <label for="uuidCount">生成数:</label>
     <input type="number" id="uuidCount" min="1" max="100" value="1" />
@@ -57,6 +66,7 @@
 
   <script src="uuid-generator.js"></script>
   <script>
+    // 5文字の乱数生成
     function generateRandomString(length) {
       const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
       let result = '';
@@ -66,15 +76,30 @@
       return result;
     }
 
-    document.getElementById('randNameBtn').addEventListener('click', () => {
-      const randStr = generateRandomString(5);
-      document.getElementById('name').value = randStr;
+    // v3,v5用オプションの表示切替
+    const versionSelect = document.getElementById('uuidVersion');
+    const v3v5Options = document.getElementById('v3v5Options');
+    const nameInput = document.getElementById('name');
+    const randNameBtn = document.getElementById('randNameBtn');
+
+    function toggleV3V5Options() {
+      if (versionSelect.value === 'v3' || versionSelect.value === 'v5') {
+        v3v5Options.style.display = 'flex';
+      } else {
+        v3v5Options.style.display = 'none';
+        nameInput.value = '';
+      }
+    }
+
+    versionSelect.addEventListener('change', toggleV3V5Options);
+    toggleV3V5Options(); // 初期表示制御
+
+    randNameBtn.addEventListener('click', () => {
+      nameInput.value = generateRandomString(5);
     });
 
     const btn = document.getElementById('generate');
-    const versionSelect = document.getElementById('uuidVersion');
     const namespaceSelect = document.getElementById('namespace');
-    const nameInput = document.getElementById('name');
     const countInput = document.getElementById('uuidCount');
     const result = document.getElementById('result');
 
